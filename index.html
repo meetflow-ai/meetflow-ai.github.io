@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meetflow — Your meetings, flowing into your code</title>
+  <meta name="description" content="100% local, free, private meeting transcription for developers. No bot joins meetings. On-device STT. Integrates with Claude Code via MCP.">
+  <meta name="theme-color" content="#0A0A0F">
+  <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Meetflow — Your meetings, flowing into your code">
+  <meta property="og:description" content="100% local, free, private meeting transcription for developers. No bot joins. On-device STT. Claude Code integration via MCP.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://meetflow-ai.github.io">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       RESET & BASE
+       ============================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0A0A0F;
+      --bg-raised: #0F0F17;
+      --card-bg: rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.06);
+      --card-hover: rgba(255,255,255,0.08);
+      --text: #E2E8F0;
+      --text-muted: #94A3B8;
+      --text-dim: #64748B;
+      --teal: #06B6D4;
+      --indigo: #6366F1;
+      --cyan: #22D3EE;
+      --green: #10B981;
+      --gradient: linear-gradient(135deg, #06B6D4, #6366F1);
+      --gradient-text: linear-gradient(135deg, #22D3EE, #818CF8);
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 16px;
+      --radius-sm: 10px;
+      --radius-xs: 6px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ============================================
+       AMBIENT BACKGROUND
+       ============================================ */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(ellipse, rgba(6,182,212,0.08) 0%, transparent 70%);
+      animation: ambient-drift 25s ease-in-out infinite;
+    }
+
+    .ambient::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      right: -20%;
+      width: 70%;
+      height: 70%;
+      background: radial-gradient(ellipse, rgba(99,102,241,0.06) 0%, transparent 70%);
+      animation: ambient-drift 30s ease-in-out infinite reverse;
+    }
+
+    @keyframes ambient-drift {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(5%, 3%) scale(1.05); }
+      66% { transform: translate(-3%, -2%) scale(0.97); }
+    }
+
+    /* ============================================
+       LAYOUT
+       ============================================ */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      padding: 100px 0;
+    }
+
+    /* ============================================
+       NAV
+       ============================================ */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(10,10,15,0.7);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.3s;
+    }
+
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .nav-logo svg {
+      height: 28px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--gradient);
+      color: #fff !important;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .nav-cta:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .nav-mobile-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    /* ============================================
+       HERO
+       ============================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--cyan);
+      margin-bottom: 32px;
+    }
+
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 .gradient-text {
+      background: var(--gradient-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(6,182,212,0.25), 0 0 0 1px rgba(99,102,241,0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(6,182,212,0.35), 0 0 0 1px rgba(99,102,241,0.4);
+    }
+
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-secondary:hover {
+      background: var(--card-hover);
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    /* Waveform animation */
+    .hero-waveform {
+      margin: 60px auto 0;
+      max-width: 600px;
+      height: 80px;
+      position: relative;
+    }
+
+    .waveform-bars {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 3px;
+    }
+
+    .waveform-bar {
+      width: 3px;
+      border-radius: 2px;
+      animation: wave-bar 1.5s ease-in-out infinite;
+    }
+
+    @keyframes wave-bar {
+      0%, 100% { transform: scaleY(0.3); }
+      50% { transform: scaleY(1); }
+    }
+
+    /* ============================================
+       SECTION HEADERS
+       ============================================ */
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--teal);
+      margin-bottom: 16px;
+    }
+
+    .section-label::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--teal);
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .section-header .section-subtitle {
+      margin: 0 auto;
+    }
+
+    /* ============================================
+       HOW IT WORKS
+       ============================================ */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      position: relative;
+    }
+
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 44px;
+      left: 16.67%;
+      right: 16.67%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal), var(--indigo));
+      opacity: 0.3;
+    }
+
+    .step {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-icon {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-icon svg {
+      width: 36px;
+      height: 36px;
+    }
+
+    .step-number {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 28px;
+      height: 28px;
+      background: var(--gradient);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .step h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .step p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* ============================================
+       FEATURES GRID
+       ============================================ */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      padding: 32px;
+      border-radius: var(--radius);
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--gradient);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature-card:hover {
+      background: var(--card-hover);
+      border-color: rgba(255,255,255,0.1);
+      transform: translateY(-4px);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .feature-icon.teal { background: rgba(6,182,212,0.12); color: var(--teal); }
+    .feature-icon.green { background: rgba(16,185,129,0.12); color: var(--green); }
+    .feature-icon.indigo { background: rgba(99,102,241,0.12); color: var(--indigo); }
+    .feature-icon.cyan { background: rgba(34,211,238,0.12); color: var(--cyan); }
+    .feature-icon.purple { background: rgba(168,85,247,0.12); color: #A855F7; }
+    .feature-icon.amber { background: rgba(245,158,11,0.12); color: #F59E0B; }
+
+    .feature-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* ============================================
+       INSTALL SECTION
+       ============================================ */
+    .install-section {
+      background: var(--bg-raised);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .install-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    .install-info h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .install-info p {
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.7;
+    }
+
+    .install-steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .install-steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .install-steps li .check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(16,185,129,0.15);
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .code-block {
+      background: #0D0D14;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .code-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .code-dots span:first-child { background: rgba(255,87,87,0.7); }
+    .code-dots span:nth-child(2) { background: rgba(255,189,46,0.7); }
+    .code-dots span:last-child { background: rgba(39,201,63,0.7); }
+
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: var(--radius-xs);
+      font-size: 12px;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+    }
+
+    .copy-btn.copied {
+      color: var(--green);
+      border-color: rgba(16,185,129,0.3);
+    }
+
+    .code-body {
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    .code-body pre {
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .code-body .comment { color: var(--text-dim); }
+    .code-body .cmd { color: var(--cyan); }
+    .code-body .pkg { color: var(--text); }
+    .code-body .flag { color: #A855F7; }
+
+    /* ============================================
+       ARCHITECTURE
+       ============================================ */
+    .arch-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .arch-diagram {
+      background: #0D0D14;
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      padding: 40px;
+      overflow-x: auto;
+    }
+
+    .arch-diagram pre {
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-muted);
+      white-space: pre;
+      text-align: center;
+    }
+
+    .arch-diagram .highlight { color: var(--cyan); }
+    .arch-diagram .accent { color: var(--teal); }
+    .arch-diagram .muted { color: var(--text-dim); }
+    .arch-diagram .flow { color: var(--indigo); }
+
+    .arch-notes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 32px;
+    }
+
+    .arch-note {
+      padding: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-sm);
+      text-align: center;
+    }
+
+    .arch-note h4 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .arch-note p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* ============================================
+       COMPARISON
+       ============================================ */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .comparison-table thead {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .comparison-table th {
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .comparison-table th:first-child {
+      width: 180px;
+    }
+
+    .comparison-table th.meetflow-col {
+      background: rgba(6,182,212,0.06);
+      color: var(--teal);
+    }
+
+    .comparison-table td {
+      padding: 14px 20px;
+      font-size: 0.92rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--text-muted);
+    }
+
+    .comparison-table td:first-child {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .comparison-table td.meetflow-col {
+      background: rgba(6,182,212,0.03);
+      color: var(--text);
+    }
+
+    .comparison-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .check-yes {
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .check-no {
+      color: var(--text-dim);
+    }
+
+    .comparison-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius);
+    }
+
+    /* ============================================
+       FOOTER
+       ============================================ */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .footer-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .footer-logo svg {
+      height: 24px;
+      width: auto;
+      opacity: 0.7;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--text);
+    }
+
+    /* ============================================
+       SCROLL ANIMATIONS
+       ============================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 900px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .install-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .arch-notes {
+        grid-template-columns: 1fr;
+      }
+
+      .steps::before {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      section {
+        padding: 72px 0;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-mobile-toggle {
+        display: block;
+      }
+
+      nav.mobile-open .nav-links {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(10,10,15,0.95);
+        backdrop-filter: blur(20px);
+        padding: 16px 24px 24px;
+        border-bottom: 1px solid var(--card-border);
+        gap: 16px;
+      }
+
+      .hero {
+        min-height: auto;
+        padding-top: 120px;
+        padding-bottom: 60px;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-left {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+      }
+
+      .arch-diagram {
+        padding: 20px;
+      }
+
+      .arch-diagram pre {
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ambient background -->
+  <div class="ambient"></div>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <a href="#" class="nav-logo" aria-label="Meetflow Home">
+        <svg viewBox="0 0 240 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+          <defs><linearGradient id="nav-g" x1="0" y1="24" x2="48" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs>
+          <path d="M4 24 Q8 12 12 24 Q16 36 20 24 Q23 15 26 24 Q28 30 30 24 L34 24 Q36 24 38 20 L40 14 Q41 11 42 14 L42 34 Q41 37 40 34 L38 28 Q36 24 34 24" stroke="url(#nav-g)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M44 24 L48 24" stroke="url(#nav-g)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+          <text x="56" y="33" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700" fill="#E2E8F0" letter-spacing="-0.5"><tspan>Meet</tspan><tspan fill="url(#nav-g)">flow</tspan></text>
+        </svg>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it works</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="https://github.com/meetflow-ai/meetflow" class="nav-cta" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a></li>
+      </ul>
+      <button class="nav-mobile-toggle" aria-label="Toggle navigation" onclick="document.querySelector('nav').classList.toggle('mobile-open')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">Open Source & Free</div>
+        <h1>Your meetings,<br><span class="gradient-text">flowing into your code</span></h1>
+        <p>100% local meeting transcription for developers. No bots, no cloud, no cost. Transcripts stream directly into Claude Code via MCP.</p>
+        <div class="hero-buttons">
+          <a href="#install" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Install Meetflow
+          </a>
+          <a href="https://github.com/meetflow-ai/meetflow" class="btn btn-secondary" target="_blank" rel="noopener">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            View on GitHub
+          </a>
+        </div>
+
+        <!-- Animated waveform -->
+        <div class="hero-waveform" aria-hidden="true">
+          <div class="waveform-bars" id="waveform"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">Three steps. Zero friction.</h2>
+        <p class="section-subtitle">From npm install to live meeting transcripts in Claude Code. No accounts, no API keys, no configuration.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-icon">
+            <span class="step-number">1</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9l3 3-3 3"/><line x1="14" y1="15" x2="17" y2="15"/></svg>
+          </div>
+          <h3>Install</h3>
+          <p>One npm command installs the CLI and macOS menu bar app. Whisper model downloads automatically.</p>
+        </div>
+        <div class="step reveal reveal-delay-2">
+          <div class="step-icon">
+            <span class="step-number">2</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--indigo)" stroke-width="1.5" stroke-linecap="round"><path d="M12 2a3 3 0 00-3 3v6a3 3 0 006 0V5a3 3 0 00-3-3z"/><path d="M19 10v1a7 7 0 01-14 0v-1"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+          </div>
+          <h3>Record</h3>
+          <p>Click record in the menu bar or let it auto-detect meetings. Audio stays 100% on your machine.</p>
+        </div>
+        <div class="step reveal reveal-delay-4">
+          <div class="step-icon">
+            <span class="step-number">3</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+          </div>
+          <h3>Ask Claude</h3>
+          <p>Transcripts stream to Claude Code via MCP. Ask about your meeting while it is still happening.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Built for developers<br>who value privacy</h2>
+        <p class="section-subtitle">No cloud, no subscriptions, no compromises. Everything runs on your hardware.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon teal">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>100% Local</h3>
+          <p>Audio is captured and transcribed entirely on your machine. Nothing is uploaded, ever. Your conversations stay yours.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon green">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>
+          </div>
+          <h3>Zero Cost</h3>
+          <p>Free and open-source. No API keys, no subscriptions, no usage limits. Uses whisper.cpp for on-device speech-to-text.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon indigo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><line x1="1" y1="1" x2="23" y2="23" stroke-width="2"/></svg>
+          </div>
+          <h3>Invisible</h3>
+          <p>No bot joins your meeting. Meetflow captures system audio directly. Participants never know you are transcribing.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon cyan">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>Real-time</h3>
+          <p>Transcripts appear while you are still talking. No waiting for meetings to end. Query your conversation in real-time.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-4">
+          <div class="feature-icon purple">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+          </div>
+          <h3>Developer-first</h3>
+          <p>Integrates with your workflow via MCP. Ask Claude Code about your meeting, create tickets, and write code from discussions.</p>
+        </div>
+
+        <div class="feature-card reveal reveal-delay-5">
+          <div class="feature-icon amber">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <h3>Smart Detection</h3>
+          <p>Automatically detects when meetings start. Labels speakers, filters hallucinations, and produces clean transcripts.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section id="install" class="install-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Get started</div>
+        <h2 class="section-title">Up and running in 60 seconds</h2>
+        <p class="section-subtitle">Two commands. That is the entire setup.</p>
+      </div>
+
+      <div class="install-grid">
+        <div class="install-info reveal">
+          <h3>What happens when you install</h3>
+          <p>The setup script handles everything automatically so you can focus on your meetings, not configuration.</p>
+          <ul class="install-steps">
+            <li>
+              <span class="check">&#10003;</span>
+              <span>Installs the macOS menu bar app for recording control</span>
+            </li>
+            <li>
+              <span class="check">&#10003;</span>
+              <span>Downloads the whisper.cpp model for on-device STT</span>
+            </li>
+            <li>
+              <span class="check">&#10003;</span>
+              <span>Configures Claude Code MCP integration automatically</span>
+            </li>
+            <li>
+              <span class="check">&#10003;</span>
+              <span>Sets up audio capture for system and microphone</span>
+            </li>
+            <li>
+              <span class="check">&#10003;</span>
+              <span>Creates the background transcription service</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="code-block">
+            <div class="code-header">
+              <div class="code-dots"><span></span><span></span><span></span></div>
+              <button class="copy-btn" onclick="copyCode(this)" data-code="npm install -g @meetflow-ai/meetflow\nmeetflow-setup">Copy</button>
+            </div>
+            <div class="code-body">
+              <pre><span class="comment"># Install globally from npm</span>
+<span class="cmd">npm</span> <span class="pkg">install</span> <span class="flag">-g</span> <span class="pkg">@meetflow-ai/meetflow</span>
+
+<span class="comment"># Run the setup wizard</span>
+<span class="cmd">meetflow-setup</span></pre>
+            </div>
+          </div>
+
+          <div class="code-block" style="margin-top: 16px;">
+            <div class="code-header">
+              <div class="code-dots"><span></span><span></span><span></span></div>
+              <button class="copy-btn" onclick="copyCode(this)" data-code="meetflow start">Copy</button>
+            </div>
+            <div class="code-body">
+              <pre><span class="comment"># Start transcribing (or use the menu bar app)</span>
+<span class="cmd">meetflow</span> <span class="pkg">start</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Architecture</div>
+        <h2 class="section-title">Simple. Local. Private.</h2>
+        <p class="section-subtitle">Everything happens on your machine. Audio never touches the network.</p>
+      </div>
+
+      <div class="arch-container reveal">
+        <div class="arch-diagram">
+          <pre>
+<span class="muted">  Your Mac</span>
+<span class="muted">  -----------------------------------------------</span>
+<span class="muted">  |</span>                                               <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="highlight">System Audio</span>  ──┐                          <span class="muted">|</span>
+<span class="muted">  |</span>                    ├──▶  <span class="accent">Audio Capture</span>         <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="highlight">Microphone</span>    ──┘       <span class="muted">(Swift)</span>            <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                        <span class="accent">whisper.cpp</span>            <span class="muted">|</span>
+<span class="muted">  |</span>                        <span class="muted">(On-device STT)</span>        <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="highlight">Menu Bar App</span>  ◀──── <span class="accent">Transcript JSON</span>       <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="muted">(SwiftUI)</span>                 <span class="flow">│</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                        <span class="accent">MCP Server</span>             <span class="muted">|</span>
+<span class="muted">  |</span>                        <span class="muted">(Node.js)</span>              <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
+<span class="muted">  |</span>                      <span class="highlight">Claude Code</span>              <span class="muted">|</span>
+<span class="muted">  |</span>                                               <span class="muted">|</span>
+<span class="muted">  -----------------------------------------------</span>
+<span class="muted">                    Nothing leaves this box.</span>
+          </pre>
+        </div>
+
+        <div class="arch-notes">
+          <div class="arch-note">
+            <h4>Capture</h4>
+            <p>Swift app captures system + mic audio using CoreAudio</p>
+          </div>
+          <div class="arch-note">
+            <h4>Transcribe</h4>
+            <p>whisper.cpp runs locally with GPU acceleration on Apple Silicon</p>
+          </div>
+          <div class="arch-note">
+            <h4>Connect</h4>
+            <p>MCP server streams transcripts to Claude Code in real-time</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section id="comparison">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Comparison</div>
+        <h2 class="section-title">Why Meetflow?</h2>
+        <p class="section-subtitle">Most meeting tools treat your conversations as their data. Meetflow treats your conversations as yours.</p>
+      </div>
+
+      <div class="comparison-wrapper reveal">
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th class="meetflow-col">Meetflow</th>
+              <th>Fathom</th>
+              <th>Otter.ai</th>
+              <th>Granola</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Price</td>
+              <td class="meetflow-col"><span class="check-yes">Free forever</span></td>
+              <td>Free tier / paid</td>
+              <td>$8.33/mo+</td>
+              <td>$10/mo+</td>
+            </tr>
+            <tr>
+              <td>Privacy</td>
+              <td class="meetflow-col"><span class="check-yes">100% local</span></td>
+              <td class="check-no">Cloud-processed</td>
+              <td class="check-no">Cloud-processed</td>
+              <td>Local + cloud</td>
+            </tr>
+            <tr>
+              <td>Bot joins call</td>
+              <td class="meetflow-col"><span class="check-yes">Never</span></td>
+              <td class="check-no">Yes</td>
+              <td class="check-no">Yes</td>
+              <td>No</td>
+            </tr>
+            <tr>
+              <td>Open source</td>
+              <td class="meetflow-col"><span class="check-yes">MIT License</span></td>
+              <td class="check-no">No</td>
+              <td class="check-no">No</td>
+              <td class="check-no">No</td>
+            </tr>
+            <tr>
+              <td>Dev tools</td>
+              <td class="meetflow-col"><span class="check-yes">MCP + Claude Code</span></td>
+              <td>CRM integrations</td>
+              <td>API available</td>
+              <td>Notion export</td>
+            </tr>
+            <tr>
+              <td>Real-time</td>
+              <td class="meetflow-col"><span class="check-yes">Yes</span></td>
+              <td>After meeting</td>
+              <td>Yes</td>
+              <td>After meeting</td>
+            </tr>
+            <tr>
+              <td>Works offline</td>
+              <td class="meetflow-col"><span class="check-yes">Yes</span></td>
+              <td class="check-no">No</td>
+              <td class="check-no">No</td>
+              <td class="check-no">Partial</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding: 80px 0;">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2 class="section-title">Ready to keep your meetings private?</h2>
+        <p class="section-subtitle" style="margin-bottom: 40px;">Install Meetflow in under a minute. No sign-up required.</p>
+        <div class="hero-buttons">
+          <a href="#install" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Get Started
+          </a>
+          <a href="https://github.com/meetflow-ai/meetflow" class="btn btn-secondary" target="_blank" rel="noopener">
+            Star on GitHub
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-left">
+          <a href="#" class="footer-logo" aria-label="Meetflow">
+            <svg viewBox="0 0 240 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs><linearGradient id="ft-g" x1="0" y1="24" x2="48" y2="24" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#6366F1"/></linearGradient></defs>
+              <path d="M4 24 Q8 12 12 24 Q16 36 20 24 Q23 15 26 24 Q28 30 30 24 L34 24 Q36 24 38 20 L40 14 Q41 11 42 14 L42 34 Q41 37 40 34 L38 28 Q36 24 34 24" stroke="url(#ft-g)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M44 24 L48 24" stroke="url(#ft-g)" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+              <text x="56" y="33" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="700" fill="#64748B" letter-spacing="-0.5"><tspan>Meet</tspan><tspan fill="url(#ft-g)">flow</tspan></text>
+            </svg>
+          </a>
+          <span class="footer-text">MIT License. Built by developers, for developers.</span>
+        </div>
+        <ul class="footer-links">
+          <li><a href="https://github.com/meetflow-ai/meetflow" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://github.com/meetflow-ai/meetflow/issues" target="_blank" rel="noopener">Issues</a></li>
+          <li><a href="https://github.com/meetflow-ai/meetflow/blob/main/LICENSE" target="_blank" rel="noopener">License</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============================================
+    // WAVEFORM GENERATION
+    // ============================================
+    (function() {
+      const container = document.getElementById('waveform');
+      if (!container) return;
+      const barCount = 60;
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i < barCount; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'waveform-bar';
+        const progress = i / barCount;
+        const r = Math.round(6 + (99 - 6) * progress);
+        const g = Math.round(182 + (102 - 182) * progress);
+        const b = Math.round(212 + (241 - 212) * progress);
+        bar.style.background = `rgb(${r},${g},${b})`;
+        const center = Math.abs(i - barCount / 2) / (barCount / 2);
+        const maxHeight = 48 * (1 - center * 0.6);
+        bar.style.height = maxHeight + 'px';
+        bar.style.animationDelay = (i * 0.06) + 's';
+        bar.style.animationDuration = (1.2 + Math.random() * 0.8) + 's';
+        fragment.appendChild(bar);
+      }
+      container.appendChild(fragment);
+    })();
+
+    // ============================================
+    // SCROLL REVEAL
+    // ============================================
+    (function() {
+      const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(function(el) {
+        observer.observe(el);
+      });
+    })();
+
+    // ============================================
+    // COPY BUTTON
+    // ============================================
+    function copyCode(btn) {
+      var code = btn.getAttribute('data-code');
+      navigator.clipboard.writeText(code).then(function() {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // ============================================
+    // SMOOTH SCROLL FOR NAV
+    // ============================================
+    document.querySelectorAll('a[href^="#"]').forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        var target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          document.querySelector('nav').classList.remove('mobile-open');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
