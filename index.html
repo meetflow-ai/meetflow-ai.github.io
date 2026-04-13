@@ -1787,43 +1787,31 @@
         <p class="section-subtitle">Everything in Meetflow is free during the beta. After beta, the exact same app becomes $4 / month &mdash; no features locked, no premium tier.</p>
       </div>
 
-      <div class="local-banner reveal">
-        <div class="local-banner-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-        </div>
-        <div class="local-banner-text">
-          <strong>Pro is the same Meetflow you get today.</strong> No features are locked behind the paid plan. Subscribe after beta to support ongoing development &mdash; everything stays 100% local, forever.
-        </div>
-      </div>
+      <p class="plans-note">Pro is the same Meetflow you get today. No features are locked behind the paid plan &mdash; subscribing after beta just helps fund ongoing development.</p>
 
       <div class="plans-grid">
         <!-- Free (now) -->
         <div class="plan-card free reveal">
-          <div class="plan-local-badge">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            100% Local
-          </div>
           <div class="plan-tier">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-            Beta &middot; Now
+            BETA
           </div>
           <div class="plan-name">Free</div>
           <div class="plan-tagline">Everything Meetflow does today &mdash; no limits, no account, no telemetry.</div>
           <div class="plan-price">
             <span class="amount">$0</span>
-            <span class="period">/ during beta</span>
+            <span class="period">free while in beta</span>
           </div>
           <ul class="plan-features">
-            <li><span class="plan-check">&#10003;</span><span>100% local transcription (no cloud, no account)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You vs Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection: Zoom, Teams, Meet, Slack, Discord, FaceTime</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Real-time live transcription streaming</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Custom dictionary for domain terms</span></li>
+            <li><span class="plan-check">&#10003;</span><span>100% local transcription (on-device whisper.cpp)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You / Remote)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection (Zoom, Teams, Meet, Slack, Discord, FaceTime)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Real-time streaming transcript</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Custom dictionary (prompt bias + replacements)</span></li>
             <li><span class="plan-check">&#10003;</span><span>Past meetings archive with search</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Claude Code, Cursor, and Windsurf integration via MCP</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Claude Code / Cursor / Windsurf MCP integration</span></li>
             <li><span class="plan-check">&#10003;</span><span><code style="font-family:var(--mono);font-size:0.85em;">/meetflow</code> slash command</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Markdown export</span></li>
-            <li><span class="plan-check">&#10003;</span><span>System theme support (light / dark / auto)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Light / dark / system theme</span></li>
           </ul>
           <a href="#install" class="plan-cta primary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1832,40 +1820,33 @@
         </div>
 
         <!-- Pro (later) -->
-        <div class="plan-card pro reveal reveal-delay-2">
-          <div class="plan-local-badge" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.3);color:#C084FC;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
-            100% Local
-          </div>
-          <div class="plan-tier">
-            <span style="width:6px;height:6px;border-radius:50%;background:#A855F7;display:inline-block;"></span>
-            Post-beta pricing
+        <div class="plan-card pro reveal reveal-delay-2" style="opacity:0.85;">
+          <div class="plan-tier" style="color:#9CA3AF;">
+            <span style="width:6px;height:6px;border-radius:50%;background:#9CA3AF;display:inline-block;"></span>
+            COMING SOON
           </div>
           <div class="plan-name">Pro</div>
           <div class="plan-tagline">Same Meetflow. Same features. Subscribe to support ongoing development.</div>
           <div class="plan-price">
-            <span class="amount">$4</span>
-            <span class="period">/ month (indicative)</span>
+            <span class="amount"><s>$4</s></span>
+            <span class="period">/ month after beta</span>
           </div>
           <ul class="plan-features">
-            <li><span class="plan-check">&#10003;</span><span>100% local transcription (no cloud, no account)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You vs Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection: Zoom, Teams, Meet, Slack, Discord, FaceTime</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Real-time live transcription streaming</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Custom dictionary for domain terms</span></li>
+            <li><span class="plan-check">&#10003;</span><span>100% local transcription (on-device whisper.cpp)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You / Remote)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection (Zoom, Teams, Meet, Slack, Discord, FaceTime)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Real-time streaming transcript</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Custom dictionary (prompt bias + replacements)</span></li>
             <li><span class="plan-check">&#10003;</span><span>Past meetings archive with search</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Claude Code, Cursor, and Windsurf integration via MCP</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Claude Code / Cursor / Windsurf MCP integration</span></li>
             <li><span class="plan-check">&#10003;</span><span><code style="font-family:var(--mono);font-size:0.85em;">/meetflow</code> slash command</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Markdown export</span></li>
-            <li><span class="plan-check">&#10003;</span><span>System theme support (light / dark / auto)</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Light / dark / system theme</span></li>
           </ul>
           <button class="plan-cta disabled" disabled aria-disabled="true">
-            Notify me at launch
+            Notify me
           </button>
         </div>
       </div>
-
-      <p class="plans-footnote"><strong>No feature gating. No cloud lock-in.</strong> You own your transcripts forever. Pro pricing is indicative and subject to change at launch.</p>
     </div>
   </section>
 
