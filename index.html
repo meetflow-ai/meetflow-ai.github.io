@@ -891,6 +891,31 @@
       border-bottom: 1px solid var(--card-border);
     }
 
+    .single-plan-card {
+      max-width: 560px;
+      margin: 32px auto 0;
+      padding: 40px 36px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      text-align: left;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .single-plan-card .single-plan-header { text-align: center; margin-bottom: 24px; }
+    .single-plan-card h3 { font-size: 1.75rem; margin: 0 0 4px; }
+    .single-plan-card .plan-status { font-size: 0.95rem; color: rgba(255,255,255,0.6); margin: 0; }
+    .single-plan-card .plan-features { list-style: none; padding: 0; margin: 0 0 32px; }
+    .single-plan-card .plan-features li { padding: 10px 0 10px 28px; position: relative; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.95rem; }
+    .single-plan-card .plan-features li::before { content: "✓"; position: absolute; left: 0; color: #06b6d4; font-weight: bold; }
+    .single-plan-card .plan-features li:last-child { border-bottom: none; }
+    .single-plan-card .btn-large { display: block; text-align: center; padding: 16px 24px; font-size: 1.05rem; }
+    .single-plan-card .plan-note { text-align: center; font-size: 0.85rem; color: rgba(255,255,255,0.5); margin: 12px 0 0; }
+    @media (max-width: 640px) {
+      .single-plan-card { padding: 28px 20px; margin-top: 24px; }
+      .single-plan-card h3 { font-size: 1.4rem; }
+    }
+
     .plans-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1712,13 +1737,6 @@
           <p>Integrates with your workflow via MCP. Ask your AI assistant about your meeting, create tickets, and write code from discussions.</p>
         </div>
 
-        <div class="feature-card reveal reveal-delay-5">
-          <div class="feature-icon amber">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          </div>
-          <h3>Smart Detection</h3>
-          <p>Automatically detects when meetings start. Labels speakers, filters hallucinations, and produces clean transcripts.</p>
-        </div>
       </div>
     </div>
   </section>
@@ -1781,40 +1799,27 @@
   <!-- Plans -->
   <section id="plans" class="plans-section">
     <div class="container">
-      <div class="section-header">
-        <div class="section-label">Pricing</div>
-        <h2 class="section-title">One plan. What you see is what you get.</h2>
-        <p class="section-subtitle">Meetflow ships exactly the features below &mdash; no roadmap promises, no premium tier, no features hidden behind a future paywall.</p>
-      </div>
-
-      <div class="plans-grid" style="grid-template-columns:1fr;max-width:520px;margin:0 auto;">
-        <div class="plan-card free reveal">
-          <div class="plan-tier">
-            <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-            Currently in private beta
-          </div>
-          <div class="plan-name">Meetflow</div>
-          <div class="plan-tagline">Free to use during the beta. After beta it becomes a paid app at a discounted launch price &mdash; details TBD.</div>
-          <ul class="plan-features">
-            <li><span class="plan-check">&#10003;</span><span>100% local transcription (on-device whisper.cpp)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You / Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection (Zoom, Teams, Meet, Slack, Discord, FaceTime)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Real-time streaming transcript</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Custom dictionary (prompt bias + replacements)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Past meetings archive with search</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Claude Code / Cursor / Windsurf MCP integration</span></li>
-            <li><span class="plan-check">&#10003;</span><span><code style="font-family:var(--mono);font-size:0.85em;">/meetflow</code> slash command</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Light / dark / system theme</span></li>
-          </ul>
-          <a href="#install" class="plan-cta primary">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download for macOS
-          </a>
-          <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin:12px 0 0;">Free during beta</p>
+      <h2 class="section-title">One plan. No gates.</h2>
+      <p class="section-subtitle">Meetflow is free while in private beta. After beta, it becomes a paid app at a discounted launch price (to be announced). The app you get is the app you keep &mdash; no feature is hidden behind a future paywall.</p>
+      <div class="single-plan-card">
+        <div class="single-plan-header">
+          <h3>Meetflow</h3>
+          <p class="plan-status">Currently in private beta</p>
         </div>
+        <ul class="plan-features">
+          <li>100% local transcription (no cloud, no account)</li>
+          <li>Speaker labels (You vs Remote)</li>
+          <li>Real-time live transcription streaming</li>
+          <li>Custom dictionary for domain terms</li>
+          <li>Past meetings archive with search</li>
+          <li>Claude Code, Cursor, and Windsurf integration via MCP</li>
+          <li>/meetflow slash command</li>
+          <li>Markdown export</li>
+          <li>System theme support (light / dark / auto)</li>
+        </ul>
+        <a href="https://meetflow-ai.github.io/Meetflow-latest.dmg" class="btn btn-primary btn-large">Download for macOS</a>
+        <p class="plan-note">Free during beta</p>
       </div>
-
-      <p class="plans-note" style="max-width:640px;margin:32px auto 0;text-align:center;">You get exactly what ships today &mdash; nothing more, nothing less. No feature is hidden behind a future paywall.</p>
     </div>
   </section>
 
@@ -1835,18 +1840,18 @@
 <span class="muted">  |</span>                                               <span class="muted">|</span>
 <span class="muted">  |</span>   <span class="highlight">System Audio</span>  ──┐                          <span class="muted">|</span>
 <span class="muted">  |</span>                    ├──▶  <span class="accent">Audio Capture</span>         <span class="muted">|</span>
-<span class="muted">  |</span>   <span class="highlight">Microphone</span>    ──┘       <span class="muted">(Swift)</span>            <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="highlight">Microphone</span>    ──┘                          <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
-<span class="muted">  |</span>                        <span class="accent">whisper.cpp</span>            <span class="muted">|</span>
-<span class="muted">  |</span>                        <span class="muted">(On-device STT)</span>        <span class="muted">|</span>
+<span class="muted">  |</span>                    <span class="accent">Speech Recognition</span>        <span class="muted">|</span>
+<span class="muted">  |</span>                        <span class="muted">(on-device)</span>            <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
-<span class="muted">  |</span>   <span class="highlight">Menu Bar App</span>  ◀──── <span class="accent">Transcript JSON</span>       <span class="muted">|</span>
-<span class="muted">  |</span>   <span class="muted">(SwiftUI)</span>                 <span class="flow">│</span>                <span class="muted">|</span>
-<span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
-<span class="muted">  |</span>                        <span class="accent">MCP Server</span>             <span class="muted">|</span>
-<span class="muted">  |</span>                        <span class="muted">(Node.js)</span>              <span class="muted">|</span>
+<span class="muted">  |</span>   <span class="highlight">Menu Bar App</span>  ◀──── <span class="accent">Transcript Store</span>      <span class="muted">|</span>
+<span class="muted">  |</span>                                <span class="flow">│</span>              <span class="muted">|</span>
+<span class="muted">  |</span>                                <span class="flow">▼</span>              <span class="muted">|</span>
+<span class="muted">  |</span>                          <span class="accent">MCP Bridge</span>             <span class="muted">|</span>
+<span class="muted">  |</span>                                                 <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">│</span>                <span class="muted">|</span>
 <span class="muted">  |</span>                              <span class="flow">▼</span>                <span class="muted">|</span>
 <span class="muted">  |</span>                      <span class="highlight">AI Assistant</span>             <span class="muted">|</span>
@@ -1859,15 +1864,15 @@
         <div class="arch-notes">
           <div class="arch-note">
             <h4>Capture</h4>
-            <p>Swift app captures system + mic audio using CoreAudio</p>
+            <p>The menu bar app captures system + microphone audio locally on your Mac.</p>
           </div>
           <div class="arch-note">
             <h4>Transcribe</h4>
-            <p>whisper.cpp runs locally with GPU acceleration on Apple Silicon</p>
+            <p>Speech recognition runs entirely on-device &mdash; nothing leaves your machine.</p>
           </div>
           <div class="arch-note">
             <h4>Connect</h4>
-            <p>MCP server streams transcripts to your AI assistant in real-time</p>
+            <p>The MCP bridge streams transcripts to your AI assistant in real-time.</p>
           </div>
         </div>
       </div>
