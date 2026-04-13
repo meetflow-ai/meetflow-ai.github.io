@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Meetflow — Your meetings, flowing into your code</title>
-  <meta name="description" content="100% local, free, private meeting transcription for developers. No bot joins meetings. On-device STT. Works with Claude Code, Cursor, Windsurf, and any MCP-compatible AI assistant.">
+  <title>Meetflow — 100% local meeting transcription. Your audio never leaves your Mac.</title>
+  <meta name="description" content="100% local meeting transcription for developers. Your audio never leaves your Mac. On-device whisper.cpp STT, no bot joins the call, no cloud, no account. Free during beta. Works with Claude Code, Cursor, Windsurf, and any MCP-compatible AI assistant.">
   <meta name="theme-color" content="#0A0A0F">
   <link rel="icon" type="image/svg+xml" href="public/favicon.svg">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Meetflow — Your meetings, flowing into your code">
-  <meta property="og:description" content="100% local, free, private meeting transcription for developers. No bot joins. On-device STT. Works with any MCP-compatible AI assistant.">
+  <meta property="og:title" content="Meetflow — Your meetings never leave your Mac.">
+  <meta property="og:description" content="100% local meeting transcription. On-device whisper.cpp, no bot joins your call, no cloud round-trip, no account. Free during beta.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://meetflow-ai.github.io">
 
@@ -1006,6 +1006,87 @@
       font-size: 0.85rem;
     }
 
+    .local-banner {
+      max-width: 880px;
+      margin: 0 auto 48px;
+      padding: 22px 28px;
+      border-radius: var(--radius);
+      background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(99,102,241,0.06));
+      border: 1px solid rgba(6,182,212,0.25);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .local-banner-icon {
+      flex-shrink: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(6,182,212,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cyan);
+    }
+
+    .local-banner-text {
+      flex: 1;
+      font-size: 0.97rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .local-banner-text strong {
+      color: var(--cyan);
+      font-weight: 700;
+    }
+
+    .plan-local-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(6,182,212,0.12);
+      border: 1px solid rgba(6,182,212,0.3);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 14px;
+      align-self: flex-start;
+    }
+
+    .feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      margin-left: 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    .feature-tag.local {
+      background: rgba(6,182,212,0.12);
+      color: var(--cyan);
+      border: 1px solid rgba(6,182,212,0.25);
+    }
+
+    .feature-tag.optin {
+      background: rgba(168,85,247,0.1);
+      color: #C084FC;
+      border: 1px solid rgba(168,85,247,0.3);
+    }
+
     @media (max-width: 760px) {
       .plans-grid {
         grid-template-columns: 1fr;
@@ -1013,6 +1094,12 @@
       .plan-card.pro::after {
         top: 18px;
         right: -48px;
+      }
+      .local-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 14px;
+        padding: 22px 20px;
       }
     }
 
@@ -1210,9 +1297,12 @@
   <section class="hero">
     <div class="container">
       <div class="hero-content">
-        <div class="hero-badge">Free during beta</div>
-        <h1>Your meetings,<br><span class="gradient-text">flowing into your code</span></h1>
-        <p>100% local meeting transcription for developers. No bots, no cloud, no cost. Transcripts stream into your AI assistant via MCP. Works with Claude Code, Cursor, Windsurf, and more.</p>
+        <div class="hero-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          100% Local · Free during beta
+        </div>
+        <h1>Your meetings<br><span class="gradient-text">never leave your Mac.</span></h1>
+        <p>100% local meeting transcription for developers. Audio is captured and transcribed on-device with whisper.cpp -- no bot joins your call, no cloud round-trip, no account. Transcripts stream straight into Claude Code, Cursor, Windsurf, and any MCP-compatible AI assistant.</p>
         <div class="hero-buttons">
           <a href="#install" class="btn btn-primary">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1414,32 +1504,46 @@
     <div class="container">
       <div class="section-header">
         <div class="section-label">Pricing</div>
-        <h2 class="section-title">Free during beta. Pro coming soon.</h2>
-        <p class="section-subtitle">Use the full app for free while Meetflow is in beta. A Pro plan with cloud sync, team sharing, and AI summaries is on the way.</p>
+        <h2 class="section-title">Your meetings never leave your Mac.</h2>
+        <p class="section-subtitle">Free forever for local-only use. Pro plan adds more on-device AI plus optional, encrypted cloud extras &mdash; coming soon.</p>
+      </div>
+
+      <div class="local-banner reveal">
+        <div class="local-banner-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </div>
+        <div class="local-banner-text">
+          <strong>Local-first, always.</strong> Every Meetflow plan keeps audio capture and transcription on your Mac. Cloud features in Pro are <strong>opt-in, end-to-end encrypted, and off by default</strong>. We never transcribe your audio in the cloud.
+        </div>
       </div>
 
       <div class="plans-grid">
         <!-- Free -->
         <div class="plan-card free reveal">
+          <div class="plan-local-badge">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            100% Local
+          </div>
           <div class="plan-tier">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
             Beta
           </div>
           <div class="plan-name">Free</div>
-          <div class="plan-tagline">Everything in Meetflow today, with no limits.</div>
+          <div class="plan-tagline">Everything Meetflow does today &mdash; on your Mac, with no account, no limits, no telemetry.</div>
           <div class="plan-price">
             <span class="amount">$0</span>
-            <span class="period">/ forever during beta</span>
+            <span class="period">/ forever for local use</span>
           </div>
           <ul class="plan-features">
-            <li><span class="plan-check">&#10003;</span><span>100% local transcription with whisper.cpp on-device</span></li>
+            <li><span class="plan-check">&#10003;</span><span>100% local transcription with on-device whisper.cpp</span></li>
+            <li><span class="plan-check">&#10003;</span><span>No bot joins your call &mdash; system audio captured at the OS level</span></li>
             <li><span class="plan-check">&#10003;</span><span>Speaker diarization (You vs Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Menu bar recording with auto meeting detection (Zoom, Teams, Meet, Slack, Discord, FaceTime)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Real-time transcript streaming as the meeting happens</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Past meetings archive with full-text search</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Auto meeting detection: Zoom, Teams, Meet, Slack, Discord, FaceTime</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Real-time transcript streaming while you talk</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Past meetings archive with local full-text search</span></li>
             <li><span class="plan-check">&#10003;</span><span>Claude Code, Cursor, and Windsurf integration via MCP</span></li>
             <li><span class="plan-check">&#10003;</span><span><code style="font-family:var(--mono);font-size:0.85em;">/meetflow</code> slash command and custom dictionary</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Markdown export of every transcript</span></li>
+            <li><span class="plan-check">&#10003;</span><span>Markdown export &mdash; no account, no telemetry, ever</span></li>
           </ul>
           <a href="#install" class="plan-cta primary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1449,25 +1553,32 @@
 
         <!-- Pro -->
         <div class="plan-card pro reveal reveal-delay-2">
+          <div class="plan-local-badge" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.3);color:#C084FC;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            Local-first
+          </div>
           <div class="plan-tier">
             <span style="width:6px;height:6px;border-radius:50%;background:#A855F7;display:inline-block;"></span>
             Teaser
           </div>
           <div class="plan-name">Pro</div>
-          <div class="plan-tagline">For teams that need cloud sync and collaboration.</div>
+          <div class="plan-tagline">Enhanced local features, plus optional encrypted cloud extras.</div>
           <div class="plan-price">
             <span class="amount">$4</span>
             <span class="period">/ month</span>
           </div>
           <ul class="plan-features">
             <li><span class="plan-check">&#10003;</span><span>Everything in Free</span></li>
-            <li><span class="plan-check">&#10003;</span><span>AI meeting summaries and action items, post-call</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Speaker identification by name (not just You / Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Encrypted cloud backup and sync across your Macs</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Team sharing with shared transcript libraries</span></li>
-            <li><span class="plan-check">&#10003;</span><span>One-click integrations: Notion, Linear, Jira, Slack</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Custom vocabulary that syncs across your team</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Priority support</span></li>
+            <li><span class="plan-check">&#10003;</span><span>On-device AI summaries and action items <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Named speaker identification with on-device diarization <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Multi-language transcription packs (larger whisper models, preloaded) <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Local semantic search across past meetings with on-device embeddings <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Dictionary auto-learning from your past meetings <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Smart meeting templates with auto-filled fields <span class="feature-tag local">Local</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Encrypted cloud backup and sync across your Macs <span class="feature-tag optin">Opt-in &middot; E2EE</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Team sharing for transcript libraries <span class="feature-tag optin">Opt-in &middot; E2EE</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Auto-post to Notion, Linear, Jira, Slack <span class="feature-tag optin">Opt-in</span></span></li>
+            <li><span class="plan-check">&#10003;</span><span>Priority access to new local AI features and priority support</span></li>
           </ul>
           <button class="plan-cta disabled" disabled aria-disabled="true">
             Notify me at launch
@@ -1475,7 +1586,7 @@
         </div>
       </div>
 
-      <p class="plans-footnote">No account required for the Free plan. Pro plan pricing is indicative and subject to change at launch.</p>
+      <p class="plans-footnote">No account required for the Free plan. Cloud features in Pro are off by default and end-to-end encrypted. Pro pricing is indicative and subject to change at launch.</p>
     </div>
   </section>
 
