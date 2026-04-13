@@ -1783,25 +1783,18 @@
     <div class="container">
       <div class="section-header">
         <div class="section-label">Pricing</div>
-        <h2 class="section-title">Same app. Free now, paid later.</h2>
-        <p class="section-subtitle">Everything in Meetflow is free during the beta. After beta, the exact same app becomes $4 / month &mdash; no features locked, no premium tier.</p>
+        <h2 class="section-title">One plan. What you see is what you get.</h2>
+        <p class="section-subtitle">Meetflow ships exactly the features below &mdash; no roadmap promises, no premium tier, no features hidden behind a future paywall.</p>
       </div>
 
-      <p class="plans-note">Pro is the same Meetflow you get today. No features are locked behind the paid plan &mdash; subscribing after beta just helps fund ongoing development.</p>
-
-      <div class="plans-grid">
-        <!-- Free (now) -->
+      <div class="plans-grid" style="grid-template-columns:1fr;max-width:520px;margin:0 auto;">
         <div class="plan-card free reveal">
           <div class="plan-tier">
             <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;"></span>
-            BETA
+            Currently in private beta
           </div>
-          <div class="plan-name">Free</div>
-          <div class="plan-tagline">Everything Meetflow does today &mdash; no limits, no account, no telemetry.</div>
-          <div class="plan-price">
-            <span class="amount">$0</span>
-            <span class="period">free while in beta</span>
-          </div>
+          <div class="plan-name">Meetflow</div>
+          <div class="plan-tagline">Free to use during the beta. After beta it becomes a paid app at a discounted launch price &mdash; details TBD.</div>
           <ul class="plan-features">
             <li><span class="plan-check">&#10003;</span><span>100% local transcription (on-device whisper.cpp)</span></li>
             <li><span class="plan-check">&#10003;</span><span>Speaker labels (You / Remote)</span></li>
@@ -1815,38 +1808,13 @@
           </ul>
           <a href="#install" class="plan-cta primary">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download for free
+            Download for macOS
           </a>
-        </div>
-
-        <!-- Pro (later) -->
-        <div class="plan-card pro reveal reveal-delay-2" style="opacity:0.85;">
-          <div class="plan-tier" style="color:#9CA3AF;">
-            <span style="width:6px;height:6px;border-radius:50%;background:#9CA3AF;display:inline-block;"></span>
-            COMING SOON
-          </div>
-          <div class="plan-name">Pro</div>
-          <div class="plan-tagline">Same Meetflow. Same features. Subscribe to support ongoing development.</div>
-          <div class="plan-price">
-            <span class="amount"><s>$4</s></span>
-            <span class="period">/ month after beta</span>
-          </div>
-          <ul class="plan-features">
-            <li><span class="plan-check">&#10003;</span><span>100% local transcription (on-device whisper.cpp)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Speaker labels (You / Remote)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Meeting auto-detection (Zoom, Teams, Meet, Slack, Discord, FaceTime)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Real-time streaming transcript</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Custom dictionary (prompt bias + replacements)</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Past meetings archive with search</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Claude Code / Cursor / Windsurf MCP integration</span></li>
-            <li><span class="plan-check">&#10003;</span><span><code style="font-family:var(--mono);font-size:0.85em;">/meetflow</code> slash command</span></li>
-            <li><span class="plan-check">&#10003;</span><span>Light / dark / system theme</span></li>
-          </ul>
-          <button class="plan-cta disabled" disabled aria-disabled="true">
-            Notify me
-          </button>
+          <p style="text-align:center;font-size:0.82rem;color:var(--muted);margin:12px 0 0;">Free during beta</p>
         </div>
       </div>
+
+      <p class="plans-note" style="max-width:640px;margin:32px auto 0;text-align:center;">You get exactly what ships today &mdash; nothing more, nothing less. No feature is hidden behind a future paywall.</p>
     </div>
   </section>
 
