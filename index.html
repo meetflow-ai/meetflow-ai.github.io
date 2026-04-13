@@ -51,6 +51,7 @@
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
     body {
@@ -59,7 +60,10 @@
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
+      max-width: 100vw;
     }
+
+    img, video, canvas { max-width: 100%; height: auto; }
 
     /* ============================================
        AMBIENT BACKGROUND
@@ -1261,7 +1265,8 @@
     /* ============================================
        RESPONSIVE
        ============================================ */
-    @media (max-width: 900px) {
+    /* Tablet — collapse multi-column grids */
+    @media (max-width: 1023px) {
       .features-grid {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -1284,11 +1289,8 @@
       }
     }
 
-    @media (max-width: 640px) {
-      section {
-        padding: 72px 0;
-      }
-
+    /* Mobile nav cutover — collapse to hamburger before links overflow */
+    @media (max-width: 860px) {
       .nav-links {
         display: none;
       }
@@ -1300,21 +1302,98 @@
       nav.mobile-open .nav-links {
         display: flex;
         flex-direction: column;
+        align-items: stretch;
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
-        background: rgba(10,10,15,0.95);
+        background: rgba(10,10,15,0.96);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
         padding: 16px 24px 24px;
         border-bottom: 1px solid var(--card-border);
-        gap: 16px;
+        gap: 4px;
+      }
+
+      nav.mobile-open .nav-links li {
+        width: 100%;
+      }
+
+      nav.mobile-open .nav-links a {
+        display: block;
+        padding: 12px 4px;
+        font-size: 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.04);
+      }
+
+      nav.mobile-open .nav-links li:last-child a {
+        border-bottom: none;
+      }
+
+      nav.mobile-open .nav-links .nav-cta {
+        margin-top: 12px;
+        text-align: center;
+        justify-content: center;
+        padding: 12px 18px;
+        font-size: 14px;
+        border-bottom: none !important;
+      }
+    }
+
+    /* Phone — typography, spacing, stacking */
+    @media (max-width: 640px) {
+      .container {
+        padding: 0 18px;
+      }
+
+      section {
+        padding: 64px 0;
       }
 
       .hero {
         min-height: auto;
-        padding-top: 120px;
-        padding-bottom: 60px;
+        padding-top: 110px;
+        padding-bottom: 56px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 9vw, 2.6rem);
+        letter-spacing: -0.02em;
+      }
+
+      .hero p {
+        font-size: 1rem;
+        margin-bottom: 32px;
+      }
+
+      .hero-badge {
+        font-size: 12px;
+        padding: 5px 13px;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 13px 20px;
+      }
+
+      .hero-waveform {
+        margin-top: 40px;
+        height: 60px;
+      }
+
+      .section-title {
+        font-size: clamp(1.6rem, 6vw, 2rem);
+      }
+
+      .section-subtitle {
+        font-size: 0.95rem;
       }
 
       .features-grid {
@@ -1323,7 +1402,21 @@
 
       .steps {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 32px;
+      }
+
+      .install-step {
+        padding: 32px 22px 24px;
+      }
+
+      .install-note-privacy,
+      .install-note-gatekeeper {
+        padding: 16px 18px;
+        font-size: 0.88rem;
+      }
+
+      .plan-card {
+        padding: 32px 24px;
       }
 
       .footer-content {
@@ -1335,6 +1428,11 @@
       .footer-left {
         flex-direction: column;
         gap: 8px;
+      }
+
+      .footer-links {
+        flex-wrap: wrap;
+        justify-content: center;
       }
 
       .comparison-table th,
@@ -1349,6 +1447,10 @@
 
       .arch-diagram pre {
         font-size: 10px;
+      }
+
+      .nav-logo svg {
+        height: 24px;
       }
     }
   </style>
