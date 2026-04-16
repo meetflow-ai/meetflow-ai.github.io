@@ -1,6 +1,6 @@
 {
-  "version": "0.2.21",
+  "version": "0.2.22",
   "severity": "normal",
-  "releaseNotes": "https://meetflow-ai.github.io/release-notes/v0.2.21.md",
+  "releaseNotes": "https://meetflow-ai.github.io/release-notes/v0.2.22.md",
   "minimumVersionBeforeForced": null
 }
